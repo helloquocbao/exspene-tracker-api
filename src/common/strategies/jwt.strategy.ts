@@ -7,11 +7,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: 'supersecret', // Có thể load từ ENV
+      secretOrKey: 'your-secret',
     });
   }
 
-  validate(payload: { sub: number; email: string }) {
-    return payload;
+  validate(payload: { sub: string }) {
+    return { userId: payload.sub };
   }
 }

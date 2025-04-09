@@ -15,14 +15,13 @@ async function bootstrap() {
     }),
   );
 
-  // ✅ Swagger setup
+  // Cấu hình Swagger
   const config = new DocumentBuilder()
-    .setTitle('Expense Tracker API')
-    .setDescription('API quản lý chi tiêu cá nhân')
+    .setTitle('Virtual Pet API')
+    .setDescription('API cho game thú ảo mini')
     .setVersion('1.0')
-    .addBearerAuth() // Để test các route cần JWT
+    .addBearerAuth() // nếu sau này dùng JWT
     .build();
-
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document); // http://localhost:4200/api
 

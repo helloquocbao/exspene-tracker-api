@@ -1,15 +1,19 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config'; // 👈 import ConfigModule
-import { ExpensesModule } from './expenses/expenses.module';
+import { ConfigModule } from '@nestjs/config';
+
 import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
+import { PetModule } from './pet/pet.module';
+import { PrismaService } from './prisma/prisma.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }), // 👈 load .env, dùng toàn app
-    ExpensesModule,
+    // Load biến môi trường từ .env và dùng toàn cục
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     AuthModule,
-    UserModule,
+    PetModule,
   ],
+  providers: [PrismaService],
 })
 export class AppModule {}

@@ -1,38 +1,36 @@
-# Stage 1: Build
-FROM node:18-alpine AS builder
+# Bước 1: Sử dụng image Node.js làm base image
+FROM node:16 AS builder
 
+# Bước 2: Tạo thư mục làm việc trong container
 WORKDIR /app
 
-# Cài dependencies
+# Bước 3: Copy package.json và package-lock.json (hoặc yarn.lock nếu sử dụng yarn)
 COPY package*.json ./
+
+# Bước 4: Cài đặt các phụ thuộc
 RUN npm install
 
-# Copy toàn bộ project
+# Bước 5: Copy toàn bộ mã nguồn vào container
 COPY . .
 
-# Copy thư mục Prisma (nếu có)
-COPY prisma ./prisma
-
-# Generate Prisma Client
-RUN npx prisma generate
-
-# Build NestJS -> dist/
+# Bước 6: Build ứng dụng NestJS (biên dịch TypeScript)
 RUN npm run build
 
-# Stage 2: Run app
-FROM node:18-alpine
+# Bước 7: Sử dụng một image Node.js khác để chạy ứng dụng trong môi trường sản xuất
+FROM node:16-slim
 
+# Bước 8: Tạo thư mục làm việc trong container
 WORKDIR /app
 
-# Copy node_modules, dist và Prisma client từ stage build
-COPY --from=builder /app/node_modules ./node_modules
+# Bước 9: Copy các file cần thiết từ bước build vào container
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/prisma ./prisma
 
-# Environment variables
-ENV PORT=4200
+# Bước 10: Cài đặt lại các phụ thuộc (chỉ cài đặt các phụ thuộc production)
+RUN npm install --only=production
 
-EXPOSE 4200
+# Bước 11: Cấu hình ứng dụng để chạy trong môi trường sản xuất
+CMD ["npm", "run", "start:prod"]
 
-CMD ["node", "dist/main"]
+# Bước 12: Mở cổng mà ứng dụng sẽ chạy
+EXPOSE 3000

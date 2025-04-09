@@ -3,32 +3,27 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model Category {
-  id        Int       @id @default(autoincrement())
-  name      String
-  expenses  Expense[]
-  createdAt DateTime  @default(now())
-}
-
-model Expense {
-  id         Int      @id @default(autoincrement())
-  title      String
-  amount     Float
-  note       String?
-  categoryId Int
-  category   Category @relation(fields: [categoryId], references: [id])
-  createdAt  DateTime @default(now())
-  userId     Int // <-- Thêm dòng này
-  user       User     @relation(fields: [userId], references: [id])
-}
-
 model User {
-  id       Int       @id @default(autoincrement())
-  email    String    @unique
-  password String
-  expenses Expense[] // Một user có nhiều expense
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  pet       Pet?
+  createdAt DateTime @default(now())
+}
+
+model Pet {
+  id          String   @id @default(cuid())
+  name        String
+  hunger      Int      @default(0)
+  happiness   Int      @default(100)
+  level       Int      @default(1)
+  experience  Int      @default(0)
+  isAlive     Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+  owner       User     @relation(fields: [ownerId], references: [id])
+  ownerId     String   @unique
 }
